@@ -3,117 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALIP Agentic AI Underwriting Demo</title>
+    <title>ALIP Policy Administration Workflow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans" x-data="{ page: 'triage', agentStatus: 'Idle', logs: [] }">
+<body class="bg-gray-50 text-gray-900 font-sans" x-data="{ 
+    step: 1, 
+    product: '', 
+    formData: { name: '', age: '', coverage: '' },
+    files: { medical: false, financial: false, demographic: false },
+    get isComplete() { return this.files.medical && this.files.financial && this.files.demographic }
+}">
 
-    <nav class="bg-slate-800 border-b border-slate-700 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold text-purple-400">ALIP NextGen Dashboard</h1>
-            <div class="space-x-4">
-                <button @click="page = 'triage'" :class="page === 'triage' ? 'text-white border-b-2 border-purple-500' : 'text-slate-400'">AI Triage Room</button>
-                <button @click="page = 'lifecycle'" :class="page === 'lifecycle' ? 'text-white border-b-2 border-purple-500' : 'text-slate-400'">Policy Lifecycle</button>
+    <nav class="bg-white border-b py-4 shadow-sm">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="font-bold text-xl text-indigo-700">ALIP <span class="text-gray-400 font-light">| Policy Portal</span></div>
+            <div class="flex space-x-2">
+                <template x-for="i in [1, 2, 3, 4]">
+                    <div :class="step >= i ? 'bg-indigo-600' : 'bg-gray-200'" class="h-2 w-12 rounded-full transition-colors"></div>
+                </template>
             </div>
         </div>
     </nav>
 
-    <main class="container mx-auto py-8 px-4" x-data="{ step: 1, product: '', docsUploaded: false }">
+    <main class="container mx-auto max-w-4xl py-12 px-6">
 
-    <div class="flex items-center justify-center mb-10 space-x-4 text-sm font-semibold">
-        <div :class="step >= 1 ? 'text-purple-400' : 'text-slate-600'">1. Select Product</div>
-        <div class="h-px w-8 bg-slate-700"></div>
-        <div :class="step >= 2 ? 'text-purple-400' : 'text-slate-600'">2. Applicant Info</div>
-        <div class="h-px w-8 bg-slate-700"></div>
-        <div :class="step >= 3 ? 'text-purple-400' : 'text-slate-600'">3. Evidence Upload</div>
-        <div class="h-px w-8 bg-slate-700"></div>
-        <div :class="step >= 4 ? 'text-purple-400' : 'text-slate-600'">4. AI Triage</div>
-    </div>
+        <section x-show="step === 1" x-transition>
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-bold">Select an Insurance Product</h1>
+                <p class="text-gray-500 mt-2">Choose from our library of 900+ production-ready templates[cite: 124].</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div @click="product = 'Whole Life'; step = 2" class="p-6 bg-white border rounded-xl hover:shadow-lg hover:border-indigo-500 cursor-pointer transition">
+                    <h3 class="font-bold text-lg text-indigo-600">Traditional Life</h3>
+                    <p class="text-sm text-gray-500 mt-2">Whole Life, Term, and Endowment products[cite: 109, 110].</p>
+                </div>
+                <div @click="product = 'Variable Universal'; step = 2" class="p-6 bg-white border rounded-xl hover:shadow-lg hover:border-indigo-500 cursor-pointer transition">
+                    <h3 class="font-bold text-lg text-indigo-600">Nontraditional</h3>
+                    <p class="text-sm text-gray-500 mt-2">Universal and Interest Sensitive products[cite: 111, 112].</p>
+                </div>
+                <div @click="product = 'Fixed Annuity'; step = 2" class="p-6 bg-white border rounded-xl hover:shadow-lg hover:border-indigo-500 cursor-pointer transition">
+                    <h3 class="font-bold text-lg text-indigo-600">Annuity</h3>
+                    <p class="text-sm text-gray-500 mt-2">Deferred, Fixed, and Market Value Adjusted[cite: 116, 120].</p>
+                </div>
+            </div>
+        </section>
 
-    <section x-show="step === 1" class="space-y-6">
-        <h2 class="text-2xl font-bold">Step 1: Choose Policy Type</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div @click="product = 'Term Life'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
-                <h3 class="text-xl font-bold text-purple-400">Traditional Life</h3>
-                <p class="text-slate-400 text-sm mt-2">Term, Whole Life, Endowment[cite: 109, 110].</p>
+        <section x-show="step === 2" x-transition class="bg-white p-8 border rounded-2xl shadow-sm">
+            <h2 class="text-2xl font-bold mb-6">Policy Details: <span class="text-indigo-600" x-text="product"></span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Full Legal Name</label>
+                    <input type="text" x-model="formData.name" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Age</label>
+                    <input type="number" x-model="formData.age" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2">Coverage Amount ($)</label>
+                    <input type="text" x-model="formData.coverage" placeholder="e.g. 500,000" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
             </div>
-            <div @click="product = 'Variable Universal'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
-                <h3 class="text-xl font-bold text-purple-400">Nontraditional</h3>
-                <p class="text-slate-400 text-sm mt-2">Universal, Variable, Interest Sensitive[cite: 111, 115].</p>
+            <div class="mt-8 flex justify-between">
+                <button @click="step = 1" class="text-gray-500 font-bold">Back</button>
+                <button @click="step = 3" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition">Continue to Evidence</button>
             </div>
-            <div @click="product = 'Fixed Annuity'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
-                <h3 class="text-xl font-bold text-purple-400">Annuity Products</h3>
-                <p class="text-slate-400 text-sm mt-2">Deferred, Fixed, Market Value Adjusted[cite: 116, 122].</p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section x-show="step === 2" class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-xl border border-slate-700">
-        <h2 class="text-2xl font-bold mb-6">Step 2: Applicant Information</h2>
-        <div class="space-y-4">
-            <div>
-                <label class="block text-xs uppercase text-slate-500 font-bold mb-1">Product Selected</label>
-                <input type="text" x-model="product" class="w-full bg-slate-900 p-3 rounded border border-slate-700" readonly>
+        <section x-show="step === 3" x-transition>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold">Evidence & Documentation</h2>
+                <p class="text-gray-500 mt-2">Upload the required evidence for the Advanced Actuarial Engine to process[cite: 34, 130].</p>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Full Name" class="bg-slate-900 p-3 rounded border border-slate-700">
-                <input type="date" class="bg-slate-900 p-3 rounded border border-slate-700">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div @click="files.medical = true" :class="files.medical ? 'border-green-500 bg-green-50' : 'border-gray-300'" class="border-2 border-dashed p-8 text-center rounded-xl cursor-pointer hover:border-indigo-400 transition">
+                    <div class="text-3xl mb-2" x-text="files.medical ? '✅' : '🏥'"></div>
+                    <span class="block font-bold">Medical Records</span>
+                    <span class="text-xs text-gray-400" x-text="files.medical ? 'Uploaded' : 'Click to Upload'"></span>
+                </div>
+                <div @click="files.financial = true" :class="files.financial ? 'border-green-500 bg-green-50' : 'border-gray-300'" class="border-2 border-dashed p-8 text-center rounded-xl cursor-pointer hover:border-indigo-400 transition">
+                    <div class="text-3xl mb-2" x-text="files.financial ? '✅' : '💰'"></div>
+                    <span class="block font-bold">Financial Proof</span>
+                    <span class="text-xs text-gray-400" x-text="files.financial ? 'Uploaded' : 'Click to Upload'"></span>
+                </div>
+                <div @click="files.demographic = true" :class="files.demographic ? 'border-green-500 bg-green-50' : 'border-gray-300'" class="border-2 border-dashed p-8 text-center rounded-xl cursor-pointer hover:border-indigo-400 transition">
+                    <div class="text-3xl mb-2" x-text="files.demographic ? '✅' : '🆔'"></div>
+                    <span class="block font-bold">Demographics</span>
+                    <span class="text-xs text-gray-400" x-text="files.demographic ? 'Uploaded' : 'Click to Upload'"></span>
+                </div>
             </div>
-            <input type="email" placeholder="Email Address" class="w-full bg-slate-900 p-3 rounded border border-slate-700">
-            <button @click="step = 3" class="w-full bg-purple-600 py-3 rounded-lg font-bold hover:bg-purple-500">Continue to Documentation</button>
-        </div>
-    </section>
+            <div class="flex justify-center">
+                <button @click="step = 4" :disabled="!isComplete" :class="isComplete ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-300 cursor-not-allowed'" class="text-white px-12 py-4 rounded-xl font-bold transition shadow-lg">
+                    Submit Application for Underwriting
+                </button>
+            </div>
+        </section>
 
-    <section x-show="step === 3" class="max-w-2xl mx-auto text-center space-y-8">
-        <h2 class="text-2xl font-bold">Step 3: Upload Evidence</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
-                <span class="block mb-2">📄</span>
-                <span class="text-xs font-bold uppercase">Medical Records</span>
+        <section x-show="step === 4" x-transition class="text-center bg-white p-12 border rounded-2xl shadow-sm">
+            <div class="inline-block p-4 bg-green-100 text-green-700 rounded-full mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
-            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
-                <span class="block mb-2">💰</span>
-                <span class="text-xs font-bold uppercase">Financials</span>
+            <h2 class="text-3xl font-bold mb-4">Underwriting Decision: Approved</h2>
+            <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                Based on the <strong x-text="product"></strong> templates and the evidence provided, 
+                the <strong x-text="formData.name"></strong> policy has been cleared for <strong>In-force Processing</strong>.
+            </p>
+            <div class="bg-gray-50 p-6 rounded-lg text-left inline-block w-full max-w-sm">
+                <h4 class="font-bold border-b pb-2 mb-2">Summary</h4>
+                <div class="flex justify-between py-1"><span>Status:</span><span class="text-green-600 font-bold">Active</span></div>
+                <div class="flex justify-between py-1"><span>Product:</span><span x-text="product"></span></div>
+                <div class="flex justify-between py-1"><span>Lifecycle Stage:</span><span>Contract Management </span></div>
             </div>
-            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
-                <span class="block mb-2">🆔</span>
-                <span class="text-xs font-bold uppercase">Identity (KYC)</span>
+            <div class="mt-8">
+                <button @click="step = 1; files = { medical: false, financial: false, demographic: false }" class="text-indigo-600 font-bold underline">Start New Case</button>
             </div>
-        </div>
-        <button @click="step = 4; startTriage(logs, (s) => agentStatus = s)" class="bg-green-600 px-10 py-3 rounded-lg font-bold">Submit to AI Triage</button>
-    </section>
+        </section>
 
-    <section x-show="step === 4" class="space-y-6">
-        <h2 class="text-2xl font-bold text-center">AI Analysis in Progress...</h2>
-        <div class="bg-black p-6 rounded-xl border border-slate-700 font-mono text-green-400">
-             <template x-for="log in logs">
-                <div class="mb-1">>> <span x-text="log"></span></div>
-            </template>
-        </div>
-        <div x-show="agentStatus === 'Finalizing'" class="text-center">
-            <button @click="step = 1; logs = []" class="text-purple-400 underline mt-4">Create Another Policy</button>
-        </div>
-    </section>
-</main>
-    <script>
-        function startTriage(logs, setStatus) {
-            logs.length = 0;
-            const steps = [
-                { s: 'Scanning', l: 'Scanning Life App #8821 (Whole Life Product)...' },
-                { s: 'Retrieving', l: 'Fetching health data via ALIP Integration Layer.' },
-                { s: 'Analyzing', l: 'Agent detecting high BMI. Ordering supplementary Rx records...' },
-                { s: 'Calculating', l: 'Running Actuarial Engine for adjusted premium.' },
-                { s: 'Finalizing', l: 'Triage complete: Auto-approved with Rated Rider.' }
-            ];
+    </main>
 
-            steps.forEach((step, i) => {
-                setTimeout(() => {
-                    setStatus(step.s);
-                    logs.push(step.l);
-                }, i * 1500);
-            });
-        }
-    </script>
+    <footer class="text-center text-gray-400 text-xs py-10">
+        ALIP System Framework | Built for Academic Presentation
+    </footer>
+
 </body>
 </html>
