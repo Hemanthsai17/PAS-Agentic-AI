@@ -19,66 +19,83 @@
         </div>
     </nav>
 
-    <main class="container mx-auto py-8 px-4">
+    <main class="container mx-auto py-8 px-4" x-data="{ step: 1, product: '', docsUploaded: false }">
 
-        <div x-show="page === 'triage'" class="space-y-6">
-            <div class="flex justify-between items-end">
-                <div>
-                    <h2 class="text-3xl font-bold">Autonomous Underwriting Triage</h2>
-                    <p class="text-slate-400">Agentic AI simulating Case & Contract Management.</p>
-                </div>
-                <button @click="startTriage(logs, (s) => agentStatus = s)" 
-                        class="bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-lg font-bold transition">
-                    Run New Application
-                </button>
+    <div class="flex items-center justify-center mb-10 space-x-4 text-sm font-semibold">
+        <div :class="step >= 1 ? 'text-purple-400' : 'text-slate-600'">1. Select Product</div>
+        <div class="h-px w-8 bg-slate-700"></div>
+        <div :class="step >= 2 ? 'text-purple-400' : 'text-slate-600'">2. Applicant Info</div>
+        <div class="h-px w-8 bg-slate-700"></div>
+        <div :class="step >= 3 ? 'text-purple-400' : 'text-slate-600'">3. Evidence Upload</div>
+        <div class="h-px w-8 bg-slate-700"></div>
+        <div :class="step >= 4 ? 'text-purple-400' : 'text-slate-600'">4. AI Triage</div>
+    </div>
+
+    <section x-show="step === 1" class="space-y-6">
+        <h2 class="text-2xl font-bold">Step 1: Choose Policy Type</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div @click="product = 'Term Life'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
+                <h3 class="text-xl font-bold text-purple-400">Traditional Life</h3>
+                <p class="text-slate-400 text-sm mt-2">Term, Whole Life, Endowment[cite: 109, 110].</p>
             </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                    <h3 class="text-sm uppercase text-slate-500 mb-4">Agent Status</h3>
-                    <div class="text-2xl font-mono text-green-400" x-text="agentStatus"></div>
-                    <div class="mt-4 space-y-2">
-                        <div class="flex justify-between text-sm"><span>Risk Confidence:</span><span class="text-purple-400">94%</span></div>
-                        <div class="flex justify-between text-sm"><span>ALIP Data Sync:</span><span class="text-green-500">Active</span></div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 bg-black p-6 rounded-xl border border-slate-700 h-64 overflow-y-auto font-mono text-sm">
-                    <h3 class="text-slate-500 mb-2 border-b border-slate-800 pb-2">Agent Thought Process (Logs)</h3>
-                    <template x-for="log in logs">
-                        <div class="mb-1">
-                            <span class="text-purple-500">>></span> 
-                            <span x-text="log"></span>
-                        </div>
-                    </template>
-                    <div x-show="logs.length === 0" class="text-slate-700 italic">Awaiting trigger...</div>
-                </div>
+            <div @click="product = 'Variable Universal'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
+                <h3 class="text-xl font-bold text-purple-400">Nontraditional</h3>
+                <p class="text-slate-400 text-sm mt-2">Universal, Variable, Interest Sensitive[cite: 111, 115].</p>
+            </div>
+            <div @click="product = 'Fixed Annuity'; step = 2" class="cursor-pointer bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 transition">
+                <h3 class="text-xl font-bold text-purple-400">Annuity Products</h3>
+                <p class="text-slate-400 text-sm mt-2">Deferred, Fixed, Market Value Adjusted[cite: 116, 122].</p>
             </div>
         </div>
+    </section>
 
-        <div x-show="page === 'lifecycle'" class="space-y-6">
-            <h2 class="text-3xl font-bold">Policy Administration Life Cycle</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-blue-500">
-                    <h4 class="font-bold text-blue-400 mb-2">1. In-Force & Billing</h4>
-                    <p class="text-xs text-slate-400">Handling transaction management and billing updates.</p>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-purple-500">
-                    <h4 class="font-bold text-purple-400 mb-2">2. Contract & Cash</h4>
-                    <p class="text-xs text-slate-400">Managing fund management and cash processing.</p>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-green-500">
-                    <h4 class="font-bold text-green-400 mb-2">3. Claims & Payout</h4>
-                    <p class="text-xs text-slate-400">Processing complex benefit disbursements.</p>
-                </div>
-                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-orange-500">
-                    <h4 class="font-bold text-orange-400 mb-2">4. Tax & Regs</h4>
-                    <p class="text-xs text-slate-400">U.S. tax processing and regulatory reporting.</p>
-                </div>
+    <section x-show="step === 2" class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-xl border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6">Step 2: Applicant Information</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs uppercase text-slate-500 font-bold mb-1">Product Selected</label>
+                <input type="text" x-model="product" class="w-full bg-slate-900 p-3 rounded border border-slate-700" readonly>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="Full Name" class="bg-slate-900 p-3 rounded border border-slate-700">
+                <input type="date" class="bg-slate-900 p-3 rounded border border-slate-700">
+            </div>
+            <input type="email" placeholder="Email Address" class="w-full bg-slate-900 p-3 rounded border border-slate-700">
+            <button @click="step = 3" class="w-full bg-purple-600 py-3 rounded-lg font-bold hover:bg-purple-500">Continue to Documentation</button>
+        </div>
+    </section>
+
+    <section x-show="step === 3" class="max-w-2xl mx-auto text-center space-y-8">
+        <h2 class="text-2xl font-bold">Step 3: Upload Evidence</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
+                <span class="block mb-2">📄</span>
+                <span class="text-xs font-bold uppercase">Medical Records</span>
+            </div>
+            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
+                <span class="block mb-2">💰</span>
+                <span class="text-xs font-bold uppercase">Financials</span>
+            </div>
+            <div class="p-6 bg-slate-800 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-400 transition cursor-pointer">
+                <span class="block mb-2">🆔</span>
+                <span class="text-xs font-bold uppercase">Identity (KYC)</span>
             </div>
         </div>
-    </main>
+        <button @click="step = 4; startTriage(logs, (s) => agentStatus = s)" class="bg-green-600 px-10 py-3 rounded-lg font-bold">Submit to AI Triage</button>
+    </section>
 
+    <section x-show="step === 4" class="space-y-6">
+        <h2 class="text-2xl font-bold text-center">AI Analysis in Progress...</h2>
+        <div class="bg-black p-6 rounded-xl border border-slate-700 font-mono text-green-400">
+             <template x-for="log in logs">
+                <div class="mb-1">>> <span x-text="log"></span></div>
+            </template>
+        </div>
+        <div x-show="agentStatus === 'Finalizing'" class="text-center">
+            <button @click="step = 1; logs = []" class="text-purple-400 underline mt-4">Create Another Policy</button>
+        </div>
+    </section>
+</main>
     <script>
         function startTriage(logs, setStatus) {
             logs.length = 0;
