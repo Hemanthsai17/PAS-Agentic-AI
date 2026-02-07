@@ -1,1 +1,1 @@
-# PAS---Agentic-AI
+# PAS-Agentic-AI
