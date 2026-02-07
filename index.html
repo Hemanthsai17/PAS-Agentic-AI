@@ -3,57 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agentic AI for ALIP Underwriting</title>
+    <title>ALIP Agentic AI Underwriting Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gray-50 font-sans leading-normal tracking-normal">
+<body class="bg-slate-900 text-slate-100 font-sans" x-data="{ page: 'triage', agentStatus: 'Idle', logs: [] }">
 
-    <header class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white py-20 px-6 text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">Agentic AI for ALIP</h1>
-        <p class="text-xl md:text-2xl mb-8">Modernizing Policy Administration with Autonomous Intelligence</p>
-        <div class="bg-white text-purple-800 font-bold py-3 px-8 rounded-full inline-block">Underwriter-Centric Innovation</div>
-    </header>
-
-    <section class="container mx-auto px-6 py-16">
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Proposed Enhancements</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <div class="bg-white p-8 rounded-lg shadow-md border-t-4 border-purple-600">
-                <h3 class="text-xl font-bold mb-4 text-purple-700">Autonomous Case Triaging</h3>
-                <p class="text-gray-600 mb-4">Transforms static Case Management into an active "Pre-Underwriter" agent that autonomously fetches missing data via the self-service portal.</p>
-                <span class="text-sm font-semibold text-gray-400">Target: ALIP New Business</span>
+    <nav class="bg-slate-800 border-b border-slate-700 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-purple-400">ALIP NextGen Dashboard</h1>
+            <div class="space-x-4">
+                <button @click="page = 'triage'" :class="page === 'triage' ? 'text-white border-b-2 border-purple-500' : 'text-slate-400'">AI Triage Room</button>
+                <button @click="page = 'lifecycle'" :class="page === 'lifecycle' ? 'text-white border-b-2 border-purple-500' : 'text-slate-400'">Policy Lifecycle</button>
             </div>
-
-            <div class="bg-white p-8 rounded-lg shadow-md border-t-4 border-purple-600">
-                <h3 class="text-xl font-bold mb-4 text-purple-700">Evidence Orchestration</h3>
-                <p class="text-gray-600 mb-4">Dynamic "Data Scout" agents that decide which third-party records (MVR, Rx, etc.) to order based on risk-reward reasoning, not just static rules.</p>
-                <span class="text-sm font-semibold text-gray-400">Target: Digital Surround Components</span>
-            </div>
-
-            <div class="bg-white p-8 rounded-lg shadow-md border-t-4 border-purple-600">
-                <h3 class="text-xl font-bold mb-4 text-purple-700">NLP Rule Co-Pilot</h3>
-                <p class="text-gray-600 mb-4">A natural language interface for underwriters to modify complex business rules without needing IT or a web developer.</p>
-                <span class="text-sm font-semibold text-gray-400">Target: Rules Engine / Workbench</span>
-            </div>
-
         </div>
-    </section>
+    </nav>
 
-    <section class="bg-gray-100 py-16">
-        <div class="container mx-auto px-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Built on a Proven Foundation</h2>
-            <ul class="list-disc list-inside text-gray-700 space-y-2">
-                <li>Utilizes ALIP's <strong>fully configurable, Angular-based platform</strong>.</li>
-                <li>Integrates with the <strong>Advanced Actuarial Calculation Engine</strong>.</li>
-                <li>Leverages the <strong>Base First approach</strong> for continuous improvement.</li>
-                <li>Deploys via <strong>Kubernetes</strong> for a modern, evergreen technology stack.</li>
-            </ul>
+    <main class="container mx-auto py-8 px-4">
+
+        <div x-show="page === 'triage'" class="space-y-6">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-bold">Autonomous Underwriting Triage</h2>
+                    <p class="text-slate-400">Agentic AI simulating Case & Contract Management.</p>
+                </div>
+                <button @click="startTriage(logs, (s) => agentStatus = s)" 
+                        class="bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-lg font-bold transition">
+                    Run New Application
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-sm uppercase text-slate-500 mb-4">Agent Status</h3>
+                    <div class="text-2xl font-mono text-green-400" x-text="agentStatus"></div>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex justify-between text-sm"><span>Risk Confidence:</span><span class="text-purple-400">94%</span></div>
+                        <div class="flex justify-between text-sm"><span>ALIP Data Sync:</span><span class="text-green-500">Active</span></div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-black p-6 rounded-xl border border-slate-700 h-64 overflow-y-auto font-mono text-sm">
+                    <h3 class="text-slate-500 mb-2 border-b border-slate-800 pb-2">Agent Thought Process (Logs)</h3>
+                    <template x-for="log in logs">
+                        <div class="mb-1">
+                            <span class="text-purple-500">>></span> 
+                            <span x-text="log"></span>
+                        </div>
+                    </template>
+                    <div x-show="logs.length === 0" class="text-slate-700 italic">Awaiting trigger...</div>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <footer class="bg-gray-800 text-white py-10 text-center">
-        <p>&copy; 2026 Academic Presentation - ALIP Policy Administration Innovation</p>
-    </footer>
+        <div x-show="page === 'lifecycle'" class="space-y-6">
+            <h2 class="text-3xl font-bold">Policy Administration Life Cycle</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-blue-500">
+                    <h4 class="font-bold text-blue-400 mb-2">1. In-Force & Billing</h4>
+                    <p class="text-xs text-slate-400">Handling transaction management and billing updates.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-purple-500">
+                    <h4 class="font-bold text-purple-400 mb-2">2. Contract & Cash</h4>
+                    <p class="text-xs text-slate-400">Managing fund management and cash processing.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-green-500">
+                    <h4 class="font-bold text-green-400 mb-2">3. Claims & Payout</h4>
+                    <p class="text-xs text-slate-400">Processing complex benefit disbursements.</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-lg border-l-4 border-orange-500">
+                    <h4 class="font-bold text-orange-400 mb-2">4. Tax & Regs</h4>
+                    <p class="text-xs text-slate-400">U.S. tax processing and regulatory reporting.</p>
+                </div>
+            </div>
+        </div>
+    </main>
 
+    <script>
+        function startTriage(logs, setStatus) {
+            logs.length = 0;
+            const steps = [
+                { s: 'Scanning', l: 'Scanning Life App #8821 (Whole Life Product)...' },
+                { s: 'Retrieving', l: 'Fetching health data via ALIP Integration Layer.' },
+                { s: 'Analyzing', l: 'Agent detecting high BMI. Ordering supplementary Rx records...' },
+                { s: 'Calculating', l: 'Running Actuarial Engine for adjusted premium.' },
+                { s: 'Finalizing', l: 'Triage complete: Auto-approved with Rated Rider.' }
+            ];
+
+            steps.forEach((step, i) => {
+                setTimeout(() => {
+                    setStatus(step.s);
+                    logs.push(step.l);
+                }, i * 1500);
+            });
+        }
+    </script>
 </body>
 </html>
